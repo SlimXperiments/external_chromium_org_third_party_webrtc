@@ -18,6 +18,7 @@ GYP_TARGET_DEPENDENCIES := \
 ### Generated for rule "third_party_webrtc_modules_modules_gyp_audioproc_debug_proto_target_genproto":
 # "{'inputs': ['../../../tools/protoc_wrapper/protoc_wrapper.py', '$(gyp_shared_intermediate_dir)/protoc'], 'process_outputs_as_sources': '1', 'extension': 'proto', 'outputs': ['$(gyp_shared_intermediate_dir)/pyproto/webrtc/audio_processing/%(INPUT_ROOT)s_pb2.py', '$(gyp_shared_intermediate_dir)/protoc_out/webrtc/audio_processing/%(INPUT_ROOT)s.pb.cc', '$(gyp_shared_intermediate_dir)/protoc_out/webrtc/audio_processing/%(INPUT_ROOT)s.pb.h'], 'rule_name': 'genproto', 'rule_sources': ['audio_processing/debug.proto'], 'action': ['python', '../../../tools/protoc_wrapper/protoc_wrapper.py', '--include', '', '--protobuf', '$(gyp_shared_intermediate_dir)/protoc_out/webrtc/audio_processing/%(INPUT_ROOT)s.pb.h', '--proto-in-dir', 'audio_processing', '--proto-in-file', '%(INPUT_ROOT)s$(suffix $<)', '--use-system-protobuf=0', '--', '$(gyp_shared_intermediate_dir)/protoc', '--cpp_out', '$(gyp_shared_intermediate_dir)/protoc_out/webrtc/audio_processing', '--python_out', '$(gyp_shared_intermediate_dir)/pyproto/webrtc/audio_processing'], 'message': 'Generating C++ and Python code from $(RULE_SOURCES)'}":
 $(gyp_shared_intermediate_dir)/pyproto/webrtc/audio_processing/debug_pb2.py: gyp_local_path := $(LOCAL_PATH)
+$(gyp_shared_intermediate_dir)/pyproto/webrtc/audio_processing/debug_pb2.py: gyp_var_prefix := $(GYP_VAR_PREFIX)
 $(gyp_shared_intermediate_dir)/pyproto/webrtc/audio_processing/debug_pb2.py: gyp_intermediate_dir := $(abspath $(gyp_intermediate_dir))
 $(gyp_shared_intermediate_dir)/pyproto/webrtc/audio_processing/debug_pb2.py: gyp_shared_intermediate_dir := $(abspath $(gyp_shared_intermediate_dir))
 $(gyp_shared_intermediate_dir)/pyproto/webrtc/audio_processing/debug_pb2.py: export PATH := $(subst $(ANDROID_BUILD_PATHS),,$(PATH))
@@ -106,6 +107,7 @@ MY_DEFS_Debug := \
 	'-DCLD_VERSION=1' \
 	'-DENABLE_PRINTING=1' \
 	'-DENABLE_MANAGED_USERS=1' \
+	'-DVIDEO_HOLE=1' \
 	'-DWEBRTC_RESTRICT_LOGGING' \
 	'-DWEBRTC_MODULE_UTILITY_VIDEO' \
 	'-DWEBRTC_CHROMIUM_BUILD' \
@@ -208,6 +210,7 @@ MY_DEFS_Release := \
 	'-DCLD_VERSION=1' \
 	'-DENABLE_PRINTING=1' \
 	'-DENABLE_MANAGED_USERS=1' \
+	'-DVIDEO_HOLE=1' \
 	'-DWEBRTC_RESTRICT_LOGGING' \
 	'-DWEBRTC_MODULE_UTILITY_VIDEO' \
 	'-DWEBRTC_CHROMIUM_BUILD' \

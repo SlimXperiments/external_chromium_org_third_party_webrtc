@@ -10,12 +10,10 @@
 
 #include "webrtc/modules/video_coding/main/source/timing.h"
 
-
 #include "webrtc/modules/video_coding/main/source/internal_defines.h"
 #include "webrtc/modules/video_coding/main/source/jitter_buffer_common.h"
-#include "webrtc/modules/video_coding/main/source/timestamp_extrapolator.h"
 #include "webrtc/system_wrappers/interface/clock.h"
-
+#include "webrtc/system_wrappers/interface/timestamp_extrapolator.h"
 
 
 namespace webrtc {
@@ -35,7 +33,7 @@ VCMTiming::VCMTiming(Clock* clock,
       prev_frame_timestamp_(0) {
   if (master_timing == NULL) {
     master_ = true;
-    ts_extrapolator_ = new VCMTimestampExtrapolator(clock_);
+    ts_extrapolator_ = new TimestampExtrapolator(clock_->TimeInMilliseconds());
   } else {
     ts_extrapolator_ = master_timing->ts_extrapolator_;
   }
@@ -50,7 +48,7 @@ VCMTiming::~VCMTiming() {
 
 void VCMTiming::Reset() {
   CriticalSectionScoped cs(crit_sect_);
-  ts_extrapolator_->Reset();
+  ts_extrapolator_->Reset(clock_->TimeInMilliseconds());
   codec_timer_.Reset();
   render_delay_ms_ = kDefaultRenderDelayMs;
   min_playout_delay_ms_ = 0;

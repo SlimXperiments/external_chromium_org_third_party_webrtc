@@ -97,7 +97,6 @@ AudioBuffer::AudioBuffer(int input_samples_per_channel,
     samples_per_split_channel_(proc_samples_per_channel_),
     num_mixed_channels_(0),
     num_mixed_low_pass_channels_(0),
-    data_was_mixed_(false),
     reference_copied_(false),
     activity_(AudioFrame::kVadUnknown),
     is_muted_(false),
@@ -220,7 +219,6 @@ void AudioBuffer::CopyTo(int samples_per_channel,
 void AudioBuffer::InitForNewData() {
   data_ = NULL;
   keyboard_data_ = NULL;
-  data_was_mixed_ = false;
   num_mixed_channels_ = 0;
   num_mixed_low_pass_channels_ = 0;
   reference_copied_ = false;
@@ -228,16 +226,22 @@ void AudioBuffer::InitForNewData() {
   is_muted_ = false;
 }
 
-int16_t* AudioBuffer::data(int channel) const {
+const int16_t* AudioBuffer::data(int channel) const {
   assert(channel >= 0 && channel < num_proc_channels_);
   if (data_ != NULL) {
+    assert(channel == 0 && num_proc_channels_ == 1);
     return data_;
   }
 
   return channels_->channel(channel);
 }
 
-int16_t* AudioBuffer::low_pass_split_data(int channel) const {
+int16_t* AudioBuffer::data(int channel) {
+  const AudioBuffer* t = this;
+  return const_cast<int16_t*>(t->data(channel));
+}
+
+const int16_t* AudioBuffer::low_pass_split_data(int channel) const {
   assert(channel >= 0 && channel < num_proc_channels_);
   if (split_channels_.get() == NULL) {
     return data(channel);
@@ -246,7 +250,12 @@ int16_t* AudioBuffer::low_pass_split_data(int channel) const {
   return split_channels_->low_channel(channel);
 }
 
-int16_t* AudioBuffer::high_pass_split_data(int channel) const {
+int16_t* AudioBuffer::low_pass_split_data(int channel) {
+  const AudioBuffer* t = this;
+  return const_cast<int16_t*>(t->low_pass_split_data(channel));
+}
+
+const int16_t* AudioBuffer::high_pass_split_data(int channel) const {
   assert(channel >= 0 && channel < num_proc_channels_);
   if (split_channels_.get() == NULL) {
     return NULL;
@@ -255,19 +264,24 @@ int16_t* AudioBuffer::high_pass_split_data(int channel) const {
   return split_channels_->high_channel(channel);
 }
 
-int16_t* AudioBuffer::mixed_data(int channel) const {
+int16_t* AudioBuffer::high_pass_split_data(int channel) {
+  const AudioBuffer* t = this;
+  return const_cast<int16_t*>(t->high_pass_split_data(channel));
+}
+
+const int16_t* AudioBuffer::mixed_data(int channel) const {
   assert(channel >= 0 && channel < num_mixed_channels_);
 
   return mixed_channels_->channel(channel);
 }
 
-int16_t* AudioBuffer::mixed_low_pass_data(int channel) const {
+const int16_t* AudioBuffer::mixed_low_pass_data(int channel) const {
   assert(channel >= 0 && channel < num_mixed_low_pass_channels_);
 
   return mixed_low_pass_channels_->channel(channel);
 }
 
-int16_t* AudioBuffer::low_pass_reference(int channel) const {
+const int16_t* AudioBuffer::low_pass_reference(int channel) const {
   assert(channel >= 0 && channel < num_proc_channels_);
   if (!reference_copied_) {
     return NULL;
@@ -280,7 +294,7 @@ const float* AudioBuffer::keyboard_data() const {
   return keyboard_data_;
 }
 
-SplitFilterStates* AudioBuffer::filter_states(int channel) const {
+SplitFilterStates* AudioBuffer::filter_states(int channel) {
   assert(channel >= 0 && channel < num_proc_channels_);
   return &filter_states_[channel];
 }
@@ -355,15 +369,7 @@ void AudioBuffer::InterleaveTo(AudioFrame* frame, bool data_changed) const {
   }
 
   if (num_proc_channels_ == 1) {
-    if (data_was_mixed_) {
-      memcpy(frame->data_,
-             channels_->channel(0),
-             sizeof(int16_t) * proc_samples_per_channel_);
-    } else {
-      // These should point to the same buffer in this case.
-      assert(data_ == frame->data_);
-    }
-
+    assert(data_ == frame->data_);
     return;
   }
 

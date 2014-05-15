@@ -42,6 +42,7 @@ LOCAL_SRC_FILES := \
 	third_party/webrtc/modules/audio_processing/level_estimator_impl.cc \
 	third_party/webrtc/modules/audio_processing/noise_suppression_impl.cc \
 	third_party/webrtc/modules/audio_processing/processing_component.cc \
+	third_party/webrtc/modules/audio_processing/rms_level.cc \
 	third_party/webrtc/modules/audio_processing/typing_detection.cc \
 	third_party/webrtc/modules/audio_processing/utility/delay_estimator.c \
 	third_party/webrtc/modules/audio_processing/utility/delay_estimator_wrapper.c \
@@ -109,6 +110,7 @@ MY_DEFS_Debug := \
 	'-DCLD_VERSION=1' \
 	'-DENABLE_PRINTING=1' \
 	'-DENABLE_MANAGED_USERS=1' \
+	'-DVIDEO_HOLE=1' \
 	'-DWEBRTC_RESTRICT_LOGGING' \
 	'-DWEBRTC_MODULE_UTILITY_VIDEO' \
 	'-DWEBRTC_CHROMIUM_BUILD' \
@@ -217,6 +219,7 @@ MY_DEFS_Release := \
 	'-DCLD_VERSION=1' \
 	'-DENABLE_PRINTING=1' \
 	'-DENABLE_MANAGED_USERS=1' \
+	'-DVIDEO_HOLE=1' \
 	'-DWEBRTC_RESTRICT_LOGGING' \
 	'-DWEBRTC_MODULE_UTILITY_VIDEO' \
 	'-DWEBRTC_CHROMIUM_BUILD' \

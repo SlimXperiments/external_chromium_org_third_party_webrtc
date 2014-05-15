@@ -77,7 +77,6 @@ MY_CFLAGS_Debug := \
 	-mfpmath=sse \
 	-mmmx \
 	-m32 \
-	-fuse-ld=gold \
 	-ffunction-sections \
 	-funwind-tables \
 	-g \
@@ -114,6 +113,7 @@ MY_DEFS_Debug := \
 	'-DCLD_VERSION=1' \
 	'-DENABLE_PRINTING=1' \
 	'-DENABLE_MANAGED_USERS=1' \
+	'-DVIDEO_HOLE=1' \
 	'-DWEBRTC_RESTRICT_LOGGING' \
 	'-DWEBRTC_MODULE_UTILITY_VIDEO' \
 	'-DWEBRTC_CHROMIUM_BUILD' \
@@ -183,7 +183,6 @@ MY_CFLAGS_Release := \
 	-mfpmath=sse \
 	-mmmx \
 	-m32 \
-	-fuse-ld=gold \
 	-ffunction-sections \
 	-funwind-tables \
 	-g \
@@ -220,6 +219,7 @@ MY_DEFS_Release := \
 	'-DCLD_VERSION=1' \
 	'-DENABLE_PRINTING=1' \
 	'-DENABLE_MANAGED_USERS=1' \
+	'-DVIDEO_HOLE=1' \
 	'-DWEBRTC_RESTRICT_LOGGING' \
 	'-DWEBRTC_MODULE_UTILITY_VIDEO' \
 	'-DWEBRTC_CHROMIUM_BUILD' \

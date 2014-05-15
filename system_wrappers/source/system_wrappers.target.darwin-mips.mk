@@ -41,6 +41,7 @@ LOCAL_SRC_FILES := \
 	third_party/webrtc/system_wrappers/source/file_impl.cc \
 	third_party/webrtc/system_wrappers/source/logcat_trace_context.cc \
 	third_party/webrtc/system_wrappers/source/logging.cc \
+	third_party/webrtc/system_wrappers/source/rtp_to_ntp.cc \
 	third_party/webrtc/system_wrappers/source/rw_lock.cc \
 	third_party/webrtc/system_wrappers/source/rw_lock_generic.cc \
 	third_party/webrtc/system_wrappers/source/rw_lock_posix.cc \
@@ -49,6 +50,7 @@ LOCAL_SRC_FILES := \
 	third_party/webrtc/system_wrappers/source/tick_util.cc \
 	third_party/webrtc/system_wrappers/source/thread.cc \
 	third_party/webrtc/system_wrappers/source/thread_posix.cc \
+	third_party/webrtc/system_wrappers/source/timestamp_extrapolator.cc \
 	third_party/webrtc/system_wrappers/source/trace_impl.cc \
 	third_party/webrtc/system_wrappers/source/trace_posix.cc
 
@@ -109,6 +111,7 @@ MY_DEFS_Debug := \
 	'-DCLD_VERSION=1' \
 	'-DENABLE_PRINTING=1' \
 	'-DENABLE_MANAGED_USERS=1' \
+	'-DVIDEO_HOLE=1' \
 	'-DWEBRTC_RESTRICT_LOGGING' \
 	'-DWEBRTC_MODULE_UTILITY_VIDEO' \
 	'-DWEBRTC_CHROMIUM_BUILD' \
@@ -212,6 +215,7 @@ MY_DEFS_Release := \
 	'-DCLD_VERSION=1' \
 	'-DENABLE_PRINTING=1' \
 	'-DENABLE_MANAGED_USERS=1' \
+	'-DVIDEO_HOLE=1' \
 	'-DWEBRTC_RESTRICT_LOGGING' \
 	'-DWEBRTC_MODULE_UTILITY_VIDEO' \
 	'-DWEBRTC_CHROMIUM_BUILD' \

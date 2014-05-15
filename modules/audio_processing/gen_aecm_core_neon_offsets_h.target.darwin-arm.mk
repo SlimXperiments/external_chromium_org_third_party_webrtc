@@ -18,6 +18,7 @@ GYP_TARGET_DEPENDENCIES := \
 
 ### Rules for action "unpack_lib_posix":
 $(gyp_shared_intermediate_dir)/audio_processing/asm_offsets/aecm_core_neon_offsets.o: gyp_local_path := $(LOCAL_PATH)
+$(gyp_shared_intermediate_dir)/audio_processing/asm_offsets/aecm_core_neon_offsets.o: gyp_var_prefix := $(GYP_VAR_PREFIX)
 $(gyp_shared_intermediate_dir)/audio_processing/asm_offsets/aecm_core_neon_offsets.o: gyp_intermediate_dir := $(abspath $(gyp_intermediate_dir))
 $(gyp_shared_intermediate_dir)/audio_processing/asm_offsets/aecm_core_neon_offsets.o: gyp_shared_intermediate_dir := $(abspath $(gyp_shared_intermediate_dir))
 $(gyp_shared_intermediate_dir)/audio_processing/asm_offsets/aecm_core_neon_offsets.o: export PATH := $(subst $(ANDROID_BUILD_PATHS),,$(PATH))
@@ -31,6 +32,7 @@ $(gyp_shared_intermediate_dir)/audio_processing/asm_offsets/aecm_core_neon_offse
 ### Generated for rule "third_party_webrtc_modules_audio_processing_gen_core_neon_offsets_chromium_gyp_gen_aecm_core_neon_offsets_h_target_obj_int_extract":
 # "{'inputs': ['$(gyp_shared_intermediate_dir)/libvpx_obj_int_extract', '../../../libvpx/obj_int_extract.py'], 'extension': 'o', 'outputs': ['$(gyp_shared_intermediate_dir)/audio_processing/asm_offsets/%(INPUT_ROOT)s.h'], 'rule_name': 'obj_int_extract', 'rule_sources': ['$(gyp_shared_intermediate_dir)/audio_processing/asm_offsets/aecm_core_neon_offsets.o'], 'action': ['python', '../../../../third_party/libvpx/obj_int_extract.py', '-e', '$(gyp_shared_intermediate_dir)/libvpx_obj_int_extract', '-f', 'cheader', '-b', '$(RULE_SOURCES)', '-o', '$(gyp_shared_intermediate_dir)/audio_processing/asm_offsets/%(INPUT_ROOT)s.h'], 'message': 'Generate assembly offsets $(RULE_SOURCES)'}":
 $(gyp_shared_intermediate_dir)/audio_processing/asm_offsets/aecm_core_neon_offsets.h: gyp_local_path := $(LOCAL_PATH)
+$(gyp_shared_intermediate_dir)/audio_processing/asm_offsets/aecm_core_neon_offsets.h: gyp_var_prefix := $(GYP_VAR_PREFIX)
 $(gyp_shared_intermediate_dir)/audio_processing/asm_offsets/aecm_core_neon_offsets.h: gyp_intermediate_dir := $(abspath $(gyp_intermediate_dir))
 $(gyp_shared_intermediate_dir)/audio_processing/asm_offsets/aecm_core_neon_offsets.h: gyp_shared_intermediate_dir := $(abspath $(gyp_shared_intermediate_dir))
 $(gyp_shared_intermediate_dir)/audio_processing/asm_offsets/aecm_core_neon_offsets.h: export PATH := $(subst $(ANDROID_BUILD_PATHS),,$(PATH))
@@ -71,7 +73,6 @@ MY_CFLAGS_Debug := \
 	-fno-builtin-cosf \
 	-fno-builtin-sinf \
 	-fno-tree-sra \
-	-fuse-ld=gold \
 	-Wno-psabi \
 	-ffunction-sections \
 	-funwind-tables \
@@ -109,6 +110,7 @@ MY_DEFS_Debug := \
 	'-DCLD_VERSION=1' \
 	'-DENABLE_PRINTING=1' \
 	'-DENABLE_MANAGED_USERS=1' \
+	'-DVIDEO_HOLE=1' \
 	'-DWEBRTC_RESTRICT_LOGGING' \
 	'-DWEBRTC_MODULE_UTILITY_VIDEO' \
 	'-DWEBRTC_CHROMIUM_BUILD' \
@@ -171,7 +173,6 @@ MY_CFLAGS_Release := \
 	-fno-builtin-cosf \
 	-fno-builtin-sinf \
 	-fno-tree-sra \
-	-fuse-ld=gold \
 	-Wno-psabi \
 	-ffunction-sections \
 	-funwind-tables \
@@ -209,6 +210,7 @@ MY_DEFS_Release := \
 	'-DCLD_VERSION=1' \
 	'-DENABLE_PRINTING=1' \
 	'-DENABLE_MANAGED_USERS=1' \
+	'-DVIDEO_HOLE=1' \
 	'-DWEBRTC_RESTRICT_LOGGING' \
 	'-DWEBRTC_MODULE_UTILITY_VIDEO' \
 	'-DWEBRTC_CHROMIUM_BUILD' \

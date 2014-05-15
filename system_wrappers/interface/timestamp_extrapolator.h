@@ -8,8 +8,8 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#ifndef WEBRTC_MODULES_VIDEO_CODING_TIMESTAMP_EXTRAPOLATOR_H_
-#define WEBRTC_MODULES_VIDEO_CODING_TIMESTAMP_EXTRAPOLATOR_H_
+#ifndef SYSTEM_WRAPPERS_INTERFACE_TIMESTAMP_EXTRAPOLATOR_H_
+#define SYSTEM_WRAPPERS_INTERFACE_TIMESTAMP_EXTRAPOLATOR_H_
 
 #include "webrtc/system_wrappers/interface/rw_lock_wrapper.h"
 #include "webrtc/typedefs.h"
@@ -17,22 +17,19 @@
 namespace webrtc
 {
 
-class Clock;
-
-class VCMTimestampExtrapolator
+class TimestampExtrapolator
 {
 public:
-    explicit VCMTimestampExtrapolator(Clock* clock);
-    ~VCMTimestampExtrapolator();
+    explicit TimestampExtrapolator(int64_t start_ms);
+    ~TimestampExtrapolator();
     void Update(int64_t tMs, uint32_t ts90khz);
     int64_t ExtrapolateLocalTime(uint32_t timestamp90khz);
-    void Reset();
+    void Reset(int64_t start_ms);
 
 private:
     void CheckForWrapArounds(uint32_t ts90khz);
     bool DelayChangeDetection(double error);
     RWLockWrapper*        _rwLock;
-    Clock*                _clock;
     double                _w[2];
     double                _P[2][2];
     int64_t         _startMs;
@@ -56,4 +53,4 @@ private:
 
 }  // namespace webrtc
 
-#endif // WEBRTC_MODULES_VIDEO_CODING_TIMESTAMP_EXTRAPOLATOR_H_
+#endif // SYSTEM_WRAPPERS_INTERFACE_TIMESTAMP_EXTRAPOLATOR_H_

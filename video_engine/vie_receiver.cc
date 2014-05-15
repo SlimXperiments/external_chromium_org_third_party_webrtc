@@ -21,10 +21,10 @@
 #include "webrtc/modules/rtp_rtcp/interface/rtp_rtcp.h"
 #include "webrtc/modules/utility/interface/rtp_dump.h"
 #include "webrtc/modules/video_coding/main/interface/video_coding.h"
-#include "webrtc/modules/video_coding/main/source/timestamp_extrapolator.h"
 #include "webrtc/system_wrappers/interface/critical_section_wrapper.h"
 #include "webrtc/system_wrappers/interface/logging.h"
 #include "webrtc/system_wrappers/interface/tick_util.h"
+#include "webrtc/system_wrappers/interface/timestamp_extrapolator.h"
 #include "webrtc/system_wrappers/interface/trace.h"
 
 namespace webrtc {
@@ -48,7 +48,8 @@ ViEReceiver::ViEReceiver(const int32_t channel_id,
       vcm_(module_vcm),
       remote_bitrate_estimator_(remote_bitrate_estimator),
       clock_(Clock::GetRealTimeClock()),
-      ts_extrapolator_(new VCMTimestampExtrapolator(clock_)),
+      ts_extrapolator_(
+          new TimestampExtrapolator(clock_->TimeInMilliseconds())),
       rtp_dump_(NULL),
       receiving_(false),
       restored_packet_in_use_(false),
@@ -193,9 +194,9 @@ void ViEReceiver::CalculateCaptureNtpTime(WebRtcRTPHeader* rtp_header) {
   }
 
   int64_t sender_capture_ntp_ms = 0;
-  if (!synchronization::RtpToNtpMs(rtp_header->header.timestamp,
-                                   rtcp_list_,
-                                   &sender_capture_ntp_ms)) {
+  if (!RtpToNtpMs(rtp_header->header.timestamp,
+                  rtcp_list_,
+                  &sender_capture_ntp_ms)) {
     return;
   }
   uint32_t timestamp = sender_capture_ntp_ms * 90;
@@ -389,8 +390,11 @@ bool ViEReceiver::GetRtcpTimestamp() {
   }
 
   bool new_rtcp_sr = false;
-  if (!synchronization::UpdateRtcpList(
-      ntp_secs, ntp_frac, rtp_timestamp, &rtcp_list_, &new_rtcp_sr)) {
+  if (!UpdateRtcpList(ntp_secs,
+                      ntp_frac,
+                      rtp_timestamp,
+                      &rtcp_list_,
+                      &new_rtcp_sr)) {
     return false;
   }
 
@@ -458,22 +462,6 @@ int ViEReceiver::StopRTPDump() {
     return -1;
   }
   return 0;
-}
-
-// TODO(holmer): To be moved to ViEChannelGroup.
-void ViEReceiver::EstimatedReceiveBandwidth(
-    unsigned int* available_bandwidth) const {
-  std::vector<unsigned int> ssrcs;
-
-  // LatestEstimate returns an error if there is no valid bitrate estimate, but
-  // ViEReceiver instead returns a zero estimate.
-  remote_bitrate_estimator_->LatestEstimate(&ssrcs, available_bandwidth);
-  if (std::find(ssrcs.begin(), ssrcs.end(), rtp_receiver_->SSRC()) !=
-      ssrcs.end()) {
-    *available_bandwidth /= ssrcs.size();
-  } else {
-    *available_bandwidth = 0;
-  }
 }
 
 void ViEReceiver::GetReceiveBandwidthEstimatorStats(

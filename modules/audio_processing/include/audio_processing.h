@@ -61,12 +61,7 @@ struct ExperimentalAgc {
   bool enabled;
 };
 
-#if defined(ANDROID) || defined(IOS)
-// AECM only supports 8kHz & 16kHz.
-static const int kAudioProcMaxNativeSampleRateHz = 16000;
-#else
 static const int kAudioProcMaxNativeSampleRateHz = 32000;
-#endif
 
 // The Audio Processing Module (APM) provides a collection of voice processing
 // components designed for real-time communications software.
@@ -627,8 +622,7 @@ class LevelEstimator {
   // frames since the last call to RMS(). The returned value is positive but
   // should be interpreted as negative. It is constrained to [0, 127].
   //
-  // The computation follows:
-  // http://tools.ietf.org/html/draft-ietf-avtext-client-to-mixer-audio-level-05
+  // The computation follows: https://tools.ietf.org/html/rfc6465
   // with the intent that it can provide the RTP audio level indication.
   //
   // Frames passed to ProcessStream() with an |_energy| of zero are considered

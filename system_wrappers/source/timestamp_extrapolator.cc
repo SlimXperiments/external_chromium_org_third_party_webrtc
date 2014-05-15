@@ -8,15 +8,14 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "webrtc/modules/video_coding/main/source/internal_defines.h"
-#include "webrtc/modules/video_coding/main/source/timestamp_extrapolator.h"
-#include "webrtc/system_wrappers/interface/clock.h"
+#include "webrtc/system_wrappers/interface/timestamp_extrapolator.h"
+
+#include <algorithm>
 
 namespace webrtc {
 
-VCMTimestampExtrapolator::VCMTimestampExtrapolator(Clock* clock)
+TimestampExtrapolator::TimestampExtrapolator(int64_t start_ms)
     : _rwLock(RWLockWrapper::CreateRWLock()),
-      _clock(clock),
       _startMs(0),
       _firstTimestamp(0),
       _wrapArounds(0),
@@ -32,19 +31,18 @@ VCMTimestampExtrapolator::VCMTimestampExtrapolator(Clock* clock)
       _accDrift(6600),  // in timestamp ticks, i.e. 15 ms
       _accMaxError(7000),
       _P11(1e10) {
-    Reset();
+    Reset(start_ms);
 }
 
-VCMTimestampExtrapolator::~VCMTimestampExtrapolator()
+TimestampExtrapolator::~TimestampExtrapolator()
 {
     delete _rwLock;
 }
 
-void
-VCMTimestampExtrapolator::Reset()
+void TimestampExtrapolator::Reset(int64_t start_ms)
 {
     WriteLockScoped wl(*_rwLock);
-    _startMs = _clock->TimeInMilliseconds();
+    _startMs = start_ms;
     _prevMs = _startMs;
     _firstTimestamp = 0;
     _w[0] = 90.0;
@@ -62,7 +60,7 @@ VCMTimestampExtrapolator::Reset()
 }
 
 void
-VCMTimestampExtrapolator::Update(int64_t tMs, uint32_t ts90khz)
+TimestampExtrapolator::Update(int64_t tMs, uint32_t ts90khz)
 {
 
     _rwLock->AcquireLockExclusive();
@@ -71,7 +69,7 @@ VCMTimestampExtrapolator::Update(int64_t tMs, uint32_t ts90khz)
         // Ten seconds without a complete frame.
         // Reset the extrapolator
         _rwLock->ReleaseLockExclusive();
-        Reset();
+        Reset(tMs);
         _rwLock->AcquireLockExclusive();
     }
     else
@@ -144,7 +142,7 @@ VCMTimestampExtrapolator::Update(int64_t tMs, uint32_t ts90khz)
 }
 
 int64_t
-VCMTimestampExtrapolator::ExtrapolateLocalTime(uint32_t timestamp90khz)
+TimestampExtrapolator::ExtrapolateLocalTime(uint32_t timestamp90khz)
 {
     ReadLockScoped rl(*_rwLock);
     int64_t localTimeMs = 0;
@@ -182,7 +180,7 @@ VCMTimestampExtrapolator::ExtrapolateLocalTime(uint32_t timestamp90khz)
 // Investigates if the timestamp clock has overflowed since the last timestamp and
 // keeps track of the number of wrap arounds since reset.
 void
-VCMTimestampExtrapolator::CheckForWrapArounds(uint32_t ts90khz)
+TimestampExtrapolator::CheckForWrapArounds(uint32_t ts90khz)
 {
     if (_prevWrapTimestamp == -1)
     {
@@ -211,12 +209,15 @@ VCMTimestampExtrapolator::CheckForWrapArounds(uint32_t ts90khz)
 }
 
 bool
-VCMTimestampExtrapolator::DelayChangeDetection(double error)
+TimestampExtrapolator::DelayChangeDetection(double error)
 {
     // CUSUM detection of sudden delay changes
-    error = (error > 0) ? VCM_MIN(error, _accMaxError) : VCM_MAX(error, -_accMaxError);
-    _detectorAccumulatorPos = VCM_MAX(_detectorAccumulatorPos + error - _accDrift, (double)0);
-    _detectorAccumulatorNeg = VCM_MIN(_detectorAccumulatorNeg + error + _accDrift, (double)0);
+    error = (error > 0) ? std::min(error, _accMaxError) :
+                          std::max(error, -_accMaxError);
+    _detectorAccumulatorPos =
+        std::max(_detectorAccumulatorPos + error - _accDrift, (double)0);
+    _detectorAccumulatorNeg =
+        std::min(_detectorAccumulatorNeg + error + _accDrift, (double)0);
     if (_detectorAccumulatorPos > _alarmThreshold || _detectorAccumulatorNeg < -_alarmThreshold)
     {
         // Alarm
